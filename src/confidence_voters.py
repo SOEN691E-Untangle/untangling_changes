@@ -1,4 +1,5 @@
 from change import Change
+import math
 
 def calculate_file_distance(change_a, change_b):
 	"""
@@ -16,4 +17,7 @@ def calculate_file_distance(change_a, change_b):
 	:type change_b: change.Change
 	"""
 
-	pass
+	if change_a.source_file_snapshot.file_path == change_b.source_file_snapshot.file_path:
+		return math.fabs(change_a.line_number - change_b.line_number) / change_a.source_file_snapshot.line_length
+	else:
+		return 1

@@ -1,27 +1,5 @@
-class Change(object):
-	
-	def __init__(self, operation, line, line_number, file_path):
-		"""
-		:param operation: The operation of this change.
-		:type operation: str
-		:param line: The contents of the line.
-		:type line: str
-		:param line_number: The line number of this change.
-		:type line_number: int
-		:param file_path: The path to the file containing this change.
-		:type file_path: str
-		"""
-
-		self.operation = operation
-		self.line = line
-		self.line_number = line_number
-		self.file_path = file_path
-
-	def __str__(self):
-		return f'({self.operation}, {self.line}, {self.line_number}, {self.file_path})'
-
-	def __repr__(self):
-		return str(self)
+from change import Change
+from source_file import SourceFileSnapshot
 
 
 def collect_changes(commit):
@@ -30,7 +8,7 @@ def collect_changes(commit):
 	:param commit: The commit to breakdown.
 	:type commit: git.objects.commit.Commit
 	:returns: The individual line level changes.
-	:rtype: list[Change]
+	:rtype: list[change.Change]
 	"""
 
 	changes = []
@@ -58,10 +36,10 @@ def collect_changes(commit):
 					old_line_number = int(info[0][1:].split(',')[0])
 					new_line_number = int(info[1][1:].split(',')[0])
 				elif change.startswith('-'):
-					changes.append(Change('del', change[1:], old_line_number, d.a_path))
+					changes.append(Change('del', change[1:], old_line_number, SourceFileSnapshot(d.a_path)))
 					old_line_number += 1
 				elif change.startswith('+'):
-					changes.append(Change('add', change[1:], new_line_number, d.b_path))
+					changes.append(Change('add', change[1:], new_line_number, SourceFileSnapshot(d.b_path)))
 					new_line_number += 1
 				elif change == '\\ No newline at end of file':
 					continue

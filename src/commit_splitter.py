@@ -1,7 +1,3 @@
-from git import Repo
-import os
-import pprint
-
 class Change(object):
 	pass
 
@@ -31,8 +27,8 @@ def collect_changes(commit):
 
 	# TODO define a class for a change.
 
-	for parent in head.parents:
-		for d in parent.diff(head, create_patch=True):
+	for parent in commit.parents:
+		for d in parent.diff(commit, create_patch=True):
 			diff = d.diff.decode('utf-8')
 
 			for change in diff.split('\n'):
@@ -54,13 +50,3 @@ def collect_changes(commit):
 					new_line_number += 1
 
 	return changes
-
-
-if __name__ == '__main__':
-	repo = Repo('..\\..\\git')
-
-	head = repo.head.commit
-
-	changes = collect_changes(head)
-
-	pprint.pprint(changes)

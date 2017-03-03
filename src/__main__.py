@@ -8,6 +8,6 @@ if __name__ == '__main__':
 
 	head = repo.head.commit
 
-	changes = commit_splitter.collect_changes(head)
+	changes = commit_splitter.collect_changes(repo, head)
 
 	pprint.pprint(changes)

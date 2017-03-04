@@ -23,8 +23,6 @@ def main(repo_path, commit_hash):
 
     diameter = git_tree.calculate_diameter(commit.tree)
 
-    print(diameter)
-
     # for change_pair in itertools.combinations(changes, 2):
     #     file_distance = confidence_voters.calculate_file_distance(*change_pair)
     #     if file_distance not in [0, 1]:

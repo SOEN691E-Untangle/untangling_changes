@@ -3,9 +3,10 @@ class SourceFileSnapshot(object):
 	Represents a source file at a given point in history.
 	"""
 
-	# Calculing the file length is expensive. We don't want to
-	# repeat it over and over for the same files at the same commit.
+	# Calculating the file length is expensive. We don't want to
+	# repeat it over and over for the same files.
 	file_length_cache = {}
+
 
 	def __init__(self, file_path, repo, commit):
 		"""

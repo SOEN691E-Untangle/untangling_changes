@@ -3,10 +3,22 @@ import pprint
 import commit_splitter
 import confidence_voters
 import itertools
+import argparse
 
 
 if __name__ == '__main__':
-	repo = Repo('..\\..\\git')
+	parser = argparse.ArgumentParser(
+		description='Untangles commits from a Git repository.'
+	)
+
+	parser.add_argument(
+		'repo_path',
+		help='The path to the repository to mine.'
+	)
+
+	args = parser.parse_args()
+
+	repo = Repo(args.repo_path)
 
 	head = repo.head.commit
 

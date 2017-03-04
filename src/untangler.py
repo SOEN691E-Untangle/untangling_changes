@@ -5,7 +5,6 @@ import commit_splitter
 import confidence_voters
 import itertools
 import argparse
-import git_tree
 
 
 def main(repo_path, commit_hash):
@@ -24,8 +23,15 @@ def main(repo_path, commit_hash):
     for change_pair in itertools.combinations(changes, 2):
         file_distance = confidence_voters.calculate_file_distance(*change_pair)
         if file_distance not in [0, 1]:
-            print(f'{change_pair[0]} vs {change_pair[1]}')
-            print(f'{file_distance}')
+            # print(f'{change_pair[0]} vs {change_pair[1]}')
+            # print(file_distance)
+            pass
+
+        package_distance = confidence_voters.calculate_package_distance(commit.tree, *change_pair)
+        
+        if package_distance not in [0, 1]:
+            print(f'{change_pair[0].source_file_snapshot.file_path} vs {change_pair[1].source_file_snapshot.file_path}')
+            print(package_distance)
 
 
 if __name__ == '__main__':

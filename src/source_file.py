@@ -22,6 +22,7 @@ class SourceFileSnapshot(object):
 		self._commit = commit
 
 		self.file_path = file_path
+		self.sha = commit.tree[file_path].hexsha
 
 		# This gets the length of the file at point in time of the commit.
 		file_length_key = f'{commit}:{file_path}'

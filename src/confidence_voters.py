@@ -61,3 +61,18 @@ def calculate_package_distance(tree, change_a, change_b):
         distance = git_tree.calculate_distance(tree, change_a.source_file_snapshot, change_b.source_file_snapshot)
 
         return float(distance) / float(diameter)
+
+
+def calculate_call_graph_distance(static_call_graph, change_a, change_b):
+    """
+    Calcualates the distance between two changes in the call graph.
+    This value is defined as 1 divided by the number of edges between the two nodes.
+    :param static_call_graph: The static call graph to traverse.
+    :type static_call_graph: dict[str, list[str]]
+    :param change_a: The first change to consider.
+    :type change_a: change.Change
+    :param change_b: The second change to consider.
+    :type change_b: change.Change
+    """
+
+    pass

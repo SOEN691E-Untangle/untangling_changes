@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 import os
 import understand
+import json
 
 
 def _generate_understand_db(git, commit_hash, repo_path):
@@ -68,9 +69,29 @@ def generate_call_graph(git, commit_hash, repo_path):
         function_name = fn.longname()
         call_graph[function_name] = [called_fn.ent().longname() for called_fn in fn.refs('Java Call')]
 
+    
+
     db.close()
 
     # Clean up the temp file when done with it.
     os.remove(udb_path)
 
     return call_graph
+
+
+def generate_method_index(repo_path):
+    """
+    Generates an index of the line numbers each method occupies.
+    :param repo_path: The path of the repository on the file system.
+    :type repo_path: str
+    :returns: An index of the line numbers each method occupies.
+    :rtype: dict[str, list[dict[str, str | int]]]
+    """
+
+    index_json_str = subprocess.check_output([
+        'java_method_indexer.bat',
+        '-project_root',
+        repo_path
+    ])
+
+    return json.loads(index_json_str)

@@ -21,13 +21,13 @@ def main(repo_path, commit_hash):
 
     commit = repo.commit(commit_hash)
 
-    changes = commit_splitter.collect_changes(repo, commit)
+    changes = commit_splitter.collect_changes(repo, commit, repo_path)
 
     static_call_graph = call_graph.generate_call_graph(git, commit_hash, args.repo_path)
 
     method_index = call_graph.generate_method_index(args.repo_path)
 
-    # for change_pair in itertools.combinations(changes, 2):
+    for change_pair in itertools.combinations(changes, 2):
     #     file_distance = confidence_voters.calculate_file_distance(*change_pair)
     #     if file_distance not in [0, 1]:
     #         # print(f'{change_pair[0]} vs {change_pair[1]}')
@@ -40,7 +40,7 @@ def main(repo_path, commit_hash):
     #         print(f'{change_pair[0].source_file_snapshot.file_path} vs {change_pair[1].source_file_snapshot.file_path}')
     #         print(package_distance)
 
-    confidence_voters.calculate_call_graph_distance(static_call_graph, *change_pair)
+        confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair)
 
 
 if __name__ == '__main__':

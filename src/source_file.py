@@ -1,3 +1,6 @@
+import os
+
+
 class SourceFileSnapshot(object):
 	"""
 	Represents a source file at a given point in history.
@@ -8,7 +11,7 @@ class SourceFileSnapshot(object):
 	file_length_cache = {}
 
 
-	def __init__(self, file_path, repo, commit):
+	def __init__(self, file_path, repo, commit, repo_path):
 		"""
 		:param file_path: The path to the source file.
 		:type file_path: str
@@ -16,12 +19,14 @@ class SourceFileSnapshot(object):
 		:type repo: git.Repo
 		:param commit: The commit for this snapshot.
 		:type commit: git.objects.commit.Commit
+		:param repo_path: The path to the root of the repo.
+		:type repo_path: str
 		"""
 
 		self._repo = repo
 		self._commit = commit
 
-		self.file_path = file_path
+		self.file_path = os.path.abspath(os.path.join(repo_path, file_path))
 		self.sha = commit.tree[file_path].hexsha
 
 		# This gets the length of the file at point in time of the commit.

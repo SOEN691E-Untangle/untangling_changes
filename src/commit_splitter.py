@@ -4,7 +4,7 @@ from change import Change
 from source_file import SourceFileSnapshot
 
 
-def collect_changes(repo, commit):
+def collect_changes(repo, commit, repo_path):
     """
     Collects all the individual line level changes of a commit.
 
@@ -20,6 +20,8 @@ def collect_changes(repo, commit):
     :type repo: git.Repo
     :param commit: The commit to breakdown.
     :type commit: git.objects.commit.Commit
+    :param repo_path: The path to the repository root.
+    :type repo_path: str
     :returns: The individual line level changes.
     :rtype: list[change.Change]
     """
@@ -37,10 +39,10 @@ def collect_changes(repo, commit):
                     old_line_number = int(info[0][1:].split(',')[0])
                     new_line_number = int(info[1][1:].split(',')[0])
                 elif change.startswith('-'):
-                    changes.append(Change('del', change[1:], old_line_number, SourceFileSnapshot(d.a_path, repo, commit)))
+                    changes.append(Change('del', change[1:], old_line_number, SourceFileSnapshot(d.a_path, repo, commit, repo_path)))
                     old_line_number += 1
                 elif change.startswith('+'):
-                    changes.append(Change('add', change[1:], new_line_number, SourceFileSnapshot(d.b_path, repo, commit)))
+                    changes.append(Change('add', change[1:], new_line_number, SourceFileSnapshot(d.b_path, repo, commit, repo_path)))
                     new_line_number += 1
                 elif change == '\\ No newline at end of file':
                     continue

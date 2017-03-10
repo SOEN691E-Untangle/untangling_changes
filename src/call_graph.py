@@ -69,8 +69,6 @@ def generate_call_graph(git, commit_hash, repo_path):
         function_name = fn.longname()
         call_graph[function_name] = [called_fn.ent().longname() for called_fn in fn.refs('Java Call')]
 
-    
-
     db.close()
 
     # Clean up the temp file when done with it.

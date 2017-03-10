@@ -173,7 +173,4 @@ def calculate_co_change_frequency(repo, change_a, change_b):
     else:
         co_change_frequency = co_change_cache[key]
 
-    print(file_a)
-    print(file_b)
-
     return co_change_frequency

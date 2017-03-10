@@ -79,7 +79,25 @@ def _bfs(src, target, graph):
     :rtype: int
     """
 
-    pass
+    curr = src
+    queue = deque()
+    distances = {src: 0}
+
+    if src == target:
+        return 0
+
+    while queue:
+        for neighbour in graph[curr]:
+            if neighbour not in distances:
+                distances[neighbour] = distances[curr] + 1
+
+                if neighbour == target:
+                    return distances[neighbour]
+                else:
+                    queue.append(neighbour)
+
+    # There is no path between the two nodes.
+    return -1
 
 
 def calculate_call_graph_distance(static_call_graph, method_index, change_a, change_b):

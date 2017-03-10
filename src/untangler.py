@@ -40,7 +40,8 @@ def main(repo_path, commit_hash):
     #         print(f'{change_pair[0].source_file_snapshot.file_path} vs {change_pair[1].source_file_snapshot.file_path}')
     #         print(package_distance)
 
-        confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair)
+    #     print(confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair))
+        pass
 
 
 if __name__ == '__main__':

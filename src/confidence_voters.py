@@ -8,6 +8,7 @@ from collections import deque
 
 
 diameter_cache = {}
+co_change_cache = {}
 
 
 def calculate_file_distance(change_a, change_b):
@@ -140,3 +141,39 @@ def calculate_call_graph_distance(static_call_graph, method_index, change_a, cha
 
     # Now we have the keys in the static call graph, we can now look for the distance.
     return _bfs(method_a, method_b, static_call_graph)
+
+
+def calculate_co_change_frequency(repo, change_a, change_b):
+    """
+    Calculates the frequency at which two files are changed together.
+    :param repo: The repository.
+    :type repo: git.Repo
+    :param change_a: The first change to consider.
+    :type change_a: change.Change
+    :param change_b: The second change to consider.
+    :type change_b: change.Change
+    """
+
+    git = repo.git
+    file_a = change_a.source_file_snapshot.file_path
+    file_b = change_b.source_file_snapshot.file_path
+
+    key = frozenset([file_a, file_b])
+
+    if key not in co_change_cache:
+        file_a_commits = set([repo.commit(x.split()[0]) for x in git.log('--oneline', '--follow', file_a).split('\n')])
+        file_b_commits = set([repo.commit(x.split()[0]) for x in git.log('--oneline', '--follow', file_b).split('\n')])
+
+        all_commits = file_a_commits.union(file_b_commits)
+        common_commits = file_a_commits.intersection(file_b_commits)
+
+        co_change_frequency = float(len(common_commits)) / float(len(all_commits))
+
+        co_change_cache[key] = co_change_frequency
+    else:
+        co_change_frequency = co_change_cache[key]
+
+    print(file_a)
+    print(file_b)
+
+    return co_change_frequency

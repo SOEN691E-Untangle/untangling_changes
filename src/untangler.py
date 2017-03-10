@@ -41,7 +41,7 @@ def main(repo_path, commit_hash):
     #         print(package_distance)
 
     #     print(confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair))
-        pass
+    #     print(confidence_voters.calculate_co_change_frequency(repo, *change_pair))
 
 
 if __name__ == '__main__':

@@ -140,7 +140,14 @@ def calculate_call_graph_distance(static_call_graph, method_index, change_a, cha
         return -1
 
     # Now we have the keys in the static call graph, we can now look for the distance.
-    return _bfs(method_a, method_b, static_call_graph)
+    shortest_path = _bfs(method_a, method_b, static_call_graph)
+
+    if shortest_path == -1:
+        return 1
+    elif shortest_path == 0:
+        return 0
+    else:
+        return 1 - (1.0 / shortest_path)
 
 
 def calculate_co_change_frequency(repo, change_a, change_b):
@@ -173,4 +180,4 @@ def calculate_co_change_frequency(repo, change_a, change_b):
     else:
         co_change_frequency = co_change_cache[key]
 
-    return co_change_frequency
+    return 1 - co_change_frequency

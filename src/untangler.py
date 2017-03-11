@@ -6,6 +6,7 @@ import confidence_voters
 import itertools
 import argparse
 import call_graph
+import os
 
 
 def main(repo_path, commit_hash):
@@ -28,20 +29,27 @@ def main(repo_path, commit_hash):
     method_index = call_graph.generate_method_index(args.repo_path)
 
     for change_pair in itertools.combinations(changes, 2):
-    #     file_distance = confidence_voters.calculate_file_distance(*change_pair)
-    #     if file_distance not in [0, 1]:
-    #         # print(f'{change_pair[0]} vs {change_pair[1]}')
-    #         # print(file_distance)
-    #         pass
+        # 0 means changes are close, 1 means they are far
+        file_distance = confidence_voters.calculate_file_distance(*change_pair)
+        package_distance = confidence_voters.calculate_package_distance(commit.tree, *change_pair)
+        call_graph_distance = confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair)
+        co_change_frequency = confidence_voters.calculate_co_change_frequency(repo, *change_pair)
 
-    #     package_distance = confidence_voters.calculate_package_distance(commit.tree, *change_pair)
-        
-    #     if package_distance not in [0, 1]:
-    #         print(f'{change_pair[0].source_file_snapshot.file_path} vs {change_pair[1].source_file_snapshot.file_path}')
-    #         print(package_distance)
+        voters = [file_distance, package_distance, call_graph_distance, co_change_frequency]
+        voters = [v for v in voters if v >= 0 and v <= 1]
 
-    #     print(confidence_voters.calculate_call_graph_distance(static_call_graph, method_index, *change_pair))
-    #     print(confidence_voters.calculate_co_change_frequency(repo, *change_pair))
+        sum = 0
+
+        for v in voters:
+            sum += v
+
+        score = sum / len(voters)
+
+        f1 = os.path.basename(change_pair[0].source_file_snapshot.file_path)
+        f2 = os.path.basename(change_pair[1].source_file_snapshot.file_path)
+
+        print(f'{f1} <-> {f2}')
+        print(score)
 
 
 if __name__ == '__main__':

@@ -21,7 +21,51 @@ class Change(object):
         self.source_file_snapshot = source_file_snapshot
 
     def __str__(self):
-        return f'({self.operation}, {self.line}, {self.line_number}, {self.source_file_snapshot.file_path})'
+        output = '********\n'
+        output += f'({self.operation}, {self.line}, {self.line_number}, {self.source_file_snapshot.file_path})\n'
+        output += '********\n'
 
-    def __repr__(self):
-        return str(self)
+        return output
+
+
+class CompoundChange(object):
+    """
+    Represents a compound change (multiple lines).
+    """
+
+    def __init__(self, *changes_to_merge):
+        """
+        :param changes_to_merge: The changes to merge.
+        """
+
+        self.changes = []
+
+        for change in changes_to_merge:
+            if type(change) == Change:
+                self.changes.append(change)
+            elif type(change) == CompoundChange:
+                self.changes.extend(change.changes)
+
+    def __str__(self):
+        output = '+++++++\n'
+
+        for change in self.changes:
+            output += f'{change}\n'
+
+        output += '+++++++++++\n'
+
+        return output
+
+
+def merge(change_1, change_2):
+    """
+    Merges two changes.
+    :param change_1: The first change.
+    :type change_1: Change
+    :param change_2: The other change.
+    :type change_2: Change
+    :returns: The merged change.
+    :rtype: CompoundChange
+    """
+
+    return CompoundChange(change_1, change_2)

@@ -7,6 +7,7 @@ import itertools
 import argparse
 import call_graph
 import os
+import merger
 
 
 def main(repo_path, commit_hash):
@@ -28,6 +29,8 @@ def main(repo_path, commit_hash):
 
     method_index = call_graph.generate_method_index(args.repo_path)
 
+    change_matrix = {}
+
     for change_pair in itertools.combinations(changes, 2):
         # 0 means changes are close, 1 means they are far
         file_distance = confidence_voters.calculate_file_distance(*change_pair)
@@ -45,13 +48,17 @@ def main(repo_path, commit_hash):
 
         score = sum / len(voters)
 
-        f1 = os.path.basename(change_pair[0].source_file_snapshot.file_path)
-        f2 = os.path.basename(change_pair[1].source_file_snapshot.file_path)
+        if not change_matrix.get(change_pair[0]):
+            change_matrix[change_pair[0]] = {}
 
-        print(f'{f1} <-> {f2}')
-        print(score)
+        change_matrix[change_pair[0]][change_pair[1]] = score
 
 
+    final_matrix = merger.merge(change_matrix, 0.4)
+
+    for change in final_matrix.keys():
+        print(str(change))
+ 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Untangles commits from a Git repository.'

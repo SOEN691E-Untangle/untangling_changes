@@ -44,7 +44,7 @@ class CompoundChange(object):
             if type(change) == Change:
                 self.changes.append(change)
             elif type(change) == CompoundChange:
-                self.changes.extend(change.changes)
+                self.changes += change.changes
 
     def __str__(self):
         output = '+++++++\n'

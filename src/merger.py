@@ -18,7 +18,7 @@ def merge(change_matrix, threshold):
         # SELECT 2 changes with a confidence value < threshold.
         for row in change_matrix.keys():
             for column, confidence_vote in change_matrix[row].items():
-                if confidence_vote < threshold:
+                if confidence_vote and confidence_vote < threshold:
                     # collect the minimal votes.
                     changes = [row, column]
                     break
@@ -38,7 +38,7 @@ def merge(change_matrix, threshold):
                 if row in changes or column in changes:
                     old_vote = minimal_votes.get(column)
 
-                    if not old_vote or confidence_vote < old_vote:
+                    if not old_vote or (confidence_vote and confidence_vote < old_vote):
                         minimal_votes[column] = confidence_vote
 
         # Update Matrix
@@ -49,11 +49,16 @@ def merge(change_matrix, threshold):
             change_matrix[row] = {c: cv for c, cv in change_matrix[row].items() if c not in changes}
 
         new_change = change.merge(changes[0], changes[1])
+        minimal_votes[new_change] = None
 
         # Fill in the new column. The corresponding row will be all empty (triangle matrix)
         if len(change_matrix.keys()) > 0:
+            change_matrix[new_change] = {}
+
             for row in change_matrix.keys():
                 change_matrix[row][new_change] = minimal_votes[row]
+                # It's as if new_change is the last row...
+                change_matrix[new_change][row] = None
         else:
             change_matrix[new_change] = {}
             change_matrix[new_change][new_change] = 0

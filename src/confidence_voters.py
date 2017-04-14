@@ -121,33 +121,37 @@ def calculate_call_graph_distance(static_call_graph, method_index, change_a, cha
     method_a = None
     method_b = None
 
-    for line_range, method_name in method_index[change_a.source_file_snapshot.file_path].items():
-        lines = [int(l) for l in line_range.split('-')]
+    try:
+        for line_range, method_name in method_index[change_a.source_file_snapshot.file_path].items():
+            lines = [int(l) for l in line_range.split('-')]
 
-        if ln_a >= lines[0] and ln_a <= lines[1]:
-            method_a = method_name
-            break
+            if ln_a >= lines[0] and ln_a <= lines[1]:
+                method_a = method_name
+                break
 
-    for line_range, method_name in method_index[change_b.source_file_snapshot.file_path].items():
-        lines = [int(l) for l in line_range.split('-')]
+        for line_range, method_name in method_index[change_b.source_file_snapshot.file_path].items():
+            lines = [int(l) for l in line_range.split('-')]
 
-        if ln_b >= lines[0] and ln_b <= lines[1]:
-            method_b = method_name
-            break
+            if ln_b >= lines[0] and ln_b <= lines[1]:
+                method_b = method_name
+                break
 
-    if not method_a or not method_b:
-        # This means that one of the changes isn't in a method.
+        if not method_a or not method_b:
+            # This means that one of the changes isn't in a method.
+            return -1
+
+        # Now we have the keys in the static call graph, we can now look for the distance.
+        shortest_path = _bfs(method_a, method_b, static_call_graph)
+
+        if shortest_path == -1:
+            return 1
+        elif shortest_path == 0:
+            return 0
+        else:
+            return 1 - (1.0 / shortest_path)
+    except KeyError:
+        # This happens when the file is not likely code.
         return -1
-
-    # Now we have the keys in the static call graph, we can now look for the distance.
-    shortest_path = _bfs(method_a, method_b, static_call_graph)
-
-    if shortest_path == -1:
-        return 1
-    elif shortest_path == 0:
-        return 0
-    else:
-        return 1 - (1.0 / shortest_path)
 
 
 def calculate_co_change_frequency(repo, change_a, change_b):

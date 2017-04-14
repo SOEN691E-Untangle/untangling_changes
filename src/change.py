@@ -22,7 +22,7 @@ class Change(object):
 
     def __str__(self):
         output = '********\n'
-        output += f'({self.operation}, {self.line}, {self.line_number}, {self.source_file_snapshot.file_path})\n'
+        output += f'({self.operation}, {self.source_file_snapshot.file_path}, {self.line_number})\n'
         output += '********\n'
 
         return output
